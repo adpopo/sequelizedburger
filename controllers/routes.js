@@ -1,25 +1,26 @@
 // load dependencies
 var express = require("express");
 var route = express.Router();
-var burger = require("../models/burger.js")
+var db = require("../models")
 
-// basic path
-route.get("/", function(req,res){
-	burger.all(function(burger_data){
-		res.render("index",{burger_data});
+module.exports = function(app) {
+	// basic path
+	route.get("/", function(req,res){
+		
+		db.Burger.findAll({}).then(function(results){
+	      res.json(results);
+	    })
 	});
-});
 
-route.put("/burgers/update", function(req,res){
-	burger.update(req.body.burger_id, function(result){
-		res.redirect("/");
+	route.put("/burgers/update", function(req,res){
+		db.Burger.update(req.body.burger_id, function(result){
+			res.redirect("/");
+		});
 	});
-});
 
-route.post("/burgers/create", function(req, res){
-	burger.create(req.body.burger_name, function(result){
-		res.redirect("/");
+	route.post("/burgers/create", function(req, res){
+		db.Burger.create(req.body.burger_name, function(result){
+			res.redirect("/");
+		});
 	});
-});
-
-module.exports = route;
+};

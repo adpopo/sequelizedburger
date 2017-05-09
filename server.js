@@ -7,10 +7,9 @@ var routes = require("./controllers/routes.js");
 
 // setting up express and handlebars
 var app = express();
+var db = require("./models");
 app.use(express.static(__dirname + ".public"));
-app.use(bp.urlencoded({
-	extended: false
-}));
+app.use(bp.urlencoded({extended: false}));
 app.use(mo("_method"));
 app.engine("handlebars", exphbs({
 	defaultLayout: "main"
@@ -18,5 +17,8 @@ app.engine("handlebars", exphbs({
 app.set("view engine", "handlebars");
 app.use("/",routes);
 
+
 //turn that shit on
-app.listen(3000);
+db.sequelize.sync().then(function() {
+  app.listen(3000);
+});
