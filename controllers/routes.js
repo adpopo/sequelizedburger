@@ -3,24 +3,24 @@ var express = require("express");
 var route = express.Router();
 var db = require("../models")
 
-module.exports = function(app) {
-	// basic path
-	route.get("/", function(req,res){
-		
-		db.Burger.findAll({}).then(function(results){
-	      res.json(results);
-	    })
-	});
+route.get("/", function(req,res){
+	db.Burger.findAll({}).then(function(burger_data){
+      res.render("index", {burger_data});
+    })
+});
 
-	route.put("/burgers/update", function(req,res){
-		db.Burger.update(req.body.burger_id, function(result){
-			res.redirect("/");
-		});
+route.put("/burgers/update", function(req,res){
+	db.Burger.update({devoured : 1}, {where : { id : req.body.burger_id }})
+	.then(function(){
+		res.redirect("/");
 	});
+});
 
-	route.post("/burgers/create", function(req, res){
-		db.Burger.create(req.body.burger_name, function(result){
-			res.redirect("/");
-		});
+route.post("/burgers/create", function(req, res){
+	db.Burger.create({burger_name: req.body.burger_name})
+	.then(function(){
+		res.redirect("/");
 	});
-};
+});
+
+module.exports = route;
